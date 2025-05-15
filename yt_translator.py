@@ -18,13 +18,16 @@ class YouTubeTranslator:
     and translation from English to Brazilian Portuguese.
     """
     
+    # Class level dictionary to store job statuses for persistence
+    _jobs = {}
+    
     def __init__(self):
         # Create temporary directory for downloaded and processed files
         self.temp_dir = os.path.join(tempfile.gettempdir(), 'yt_translator')
         os.makedirs(self.temp_dir, exist_ok=True)
         
-        # Dictionary to store job statuses
-        self.jobs = {}
+        # Use the class level dictionary for jobs
+        # self.jobs = YouTubeTranslator._jobs
         
         # Audio processor for translation
         self.audio_processor = AudioProcessor()
@@ -36,7 +39,7 @@ class YouTubeTranslator:
         job_id = str(uuid.uuid4())
         
         # Initialize job status
-        self.jobs[job_id] = {
+        YouTubeTranslator._jobs[job_id] = {
             'status': 'initializing',
             'progress': 0,
             'youtube_url': youtube_url,
@@ -52,45 +55,45 @@ class YouTubeTranslator:
     
     def get_job_status(self, job_id):
         """Get the status of a translation job."""
-        if job_id not in self.jobs:
+        if job_id not in YouTubeTranslator._jobs:
             return {'status': 'not_found', 'message': 'Job not found'}
         
-        return self.jobs[job_id]
+        return YouTubeTranslator._jobs[job_id]
     
     def _process_job(self, job_id, youtube_url):
         """Process a translation job in a separate thread."""
         try:
             # Update job status
-            self.jobs[job_id]['status'] = 'downloading'
-            self.jobs[job_id]['message'] = 'Downloading YouTube video...'
+            YouTubeTranslator._jobs[job_id]['status'] = 'downloading'
+            YouTubeTranslator._jobs[job_id]['message'] = 'Downloading YouTube video...'
             
             # Download video
             video_info, audio_path = self._download_youtube_audio(youtube_url)
             
             # Update job with video info
-            self.jobs[job_id]['video_title'] = video_info['title']
-            self.jobs[job_id]['video_author'] = video_info['author']
-            self.jobs[job_id]['video_length'] = video_info['length']
-            self.jobs[job_id]['progress'] = 20
+            YouTubeTranslator._jobs[job_id]['video_title'] = video_info['title']
+            YouTubeTranslator._jobs[job_id]['video_author'] = video_info['author']
+            YouTubeTranslator._jobs[job_id]['video_length'] = video_info['length']
+            YouTubeTranslator._jobs[job_id]['progress'] = 20
             
             # Translate audio
-            self.jobs[job_id]['status'] = 'translating'
-            self.jobs[job_id]['message'] = 'Translating audio from English to Brazilian Portuguese...'
+            YouTubeTranslator._jobs[job_id]['status'] = 'translating'
+            YouTubeTranslator._jobs[job_id]['message'] = 'Translating audio from English to Brazilian Portuguese...'
             
             # Start translation process
             translated_audio_path = self._translate_audio(audio_path, job_id)
             
             # Update job with translation results
-            self.jobs[job_id]['status'] = 'completed'
-            self.jobs[job_id]['message'] = 'Translation completed successfully!'
-            self.jobs[job_id]['progress'] = 100
-            self.jobs[job_id]['filename'] = os.path.basename(translated_audio_path)
-            self.jobs[job_id]['translated_audio_path'] = translated_audio_path
+            YouTubeTranslator._jobs[job_id]['status'] = 'completed'
+            YouTubeTranslator._jobs[job_id]['message'] = 'Translation completed successfully!'
+            YouTubeTranslator._jobs[job_id]['progress'] = 100
+            YouTubeTranslator._jobs[job_id]['filename'] = os.path.basename(translated_audio_path)
+            YouTubeTranslator._jobs[job_id]['translated_audio_path'] = translated_audio_path
             
         except Exception as e:
             logger.error(f"Error processing job {job_id}: {str(e)}")
-            self.jobs[job_id]['status'] = 'error'
-            self.jobs[job_id]['message'] = f'Error: {str(e)}'
+            YouTubeTranslator._jobs[job_id]['status'] = 'error'
+            YouTubeTranslator._jobs[job_id]['message'] = f'Error: {str(e)}'
     
     def _download_youtube_audio(self, youtube_url):
         """
