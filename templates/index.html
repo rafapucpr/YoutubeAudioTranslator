@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-video"></i> YouTube Audio Translator</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h5>Convert YouTube audio from English to Brazilian Portuguese</h5>
+                    <p class="text-muted">Maintains exact audio timing for perfect video synchronization</p>
+                </div>
+
+                <form action="{{ url_for('translate') }}" method="post">
+                    <div class="mb-3">
+                        <label for="youtube_url" class="form-label">YouTube Video URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fab fa-youtube text-danger"></i>
+                            </span>
+                            <input type="url" class="form-control" id="youtube_url" name="youtube_url" 
+                                   placeholder="https://www.youtube.com/watch?v=..." required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-language"></i> Translate
+                            </button>
+                        </div>
+                        <div class="form-text">Enter the full URL of a YouTube video in English</div>
+                    </div>
+                </form>
+
+                <div class="card mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle"></i> How It Works</h5>
+                    </div>
+                    <div class="card-body">
+                        <ol class="mb-0">
+                            <li>Enter a YouTube video URL (videos in English)</li>
+                            <li>We download the audio from the video</li>
+                            <li>The audio is transcribed to text using speech recognition</li>
+                            <li>The text is translated to Brazilian Portuguese</li>
+                            <li>A new audio file is generated with the translated speech</li>
+                            <li>The timing is adjusted to match the original audio perfectly</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-4">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>Important:</strong> Long videos (over 1 hour) will be processed in chunks and might take longer to translate.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

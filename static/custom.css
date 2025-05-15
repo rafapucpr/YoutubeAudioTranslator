@@ -1,0 +1,28 @@
+/* Additional custom styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+.progress {
+    height: 20px;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-radius: 0 !important;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 1.2rem;
+}

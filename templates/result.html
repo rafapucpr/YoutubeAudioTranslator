@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-tasks"></i> Translation Status</h4>
+            </div>
+            <div class="card-body">
+                {% if status.status == 'error' %}
+                    <div class="alert alert-danger text-center">
+                        <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                        <h5>Error Occurred</h5>
+                        <p>{{ status.message }}</p>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Try Again</a>
+                    </div>
+                
+                {% elif status.status == 'completed' %}
+                    <div class="alert alert-success text-center">
+                        <i class="fas fa-check-circle fa-2x mb-3"></i>
+                        <h5>Translation Completed!</h5>
+                        <p>Your audio has been successfully translated to Brazilian Portuguese</p>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-film"></i> Video Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Title:</strong> {{ status.video_title }}</p>
+                            <p><strong>Author:</strong> {{ status.video_author }}</p>
+                            <p><strong>Length:</strong> {{ '%d:%02d' % (status.video_length // 60, status.video_length % 60) }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="{{ download_url }}" class="btn btn-lg btn-success">
+                            <i class="fas fa-download"></i> Download Translated Audio
+                        </a>
+                        <p class="text-muted mt-2">
+                            File format: MP3, Duration: {{ '%d:%02d' % (status.video_length // 60, status.video_length % 60) }}
+                        </p>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> Translate Another Video
+                        </a>
+                    </div>
+                
+                {% else %}
+                    <div class="text-center mb-4">
+                        <h5>
+                            <i class="fas fa-spinner fa-spin"></i> 
+                            {{ status.message }}
+                        </h5>
+                        <div class="progress mt-3">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" 
+                                 style="width: {{ status.progress }}%"></div>
+                        </div>
+                        <p class="text-muted mt-2">{{ status.progress }}% complete</p>
+                    </div>
+                    
+                    {% if status.video_title %}
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-film"></i> Video Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Title:</strong> {{ status.video_title }}</p>
+                            <p><strong>Author:</strong> {{ status.video_author }}</p>
+                            <p><strong>Length:</strong> {{ '%d:%02d' % (status.video_length // 60, status.video_length % 60) }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        This page will automatically refresh to show progress updates.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
