@@ -157,7 +157,7 @@ class YouTubeTranslator:
             
             # Simulate decision making process based on file size
             if duration > 3600:  # If longer than 1 hour
-                self.jobs[job_id]['message'] = 'Audio is longer than 1 hour. Splitting into chunks...'
+                YouTubeTranslator._jobs[job_id]['message'] = 'Audio is longer than 1 hour. Splitting into chunks...'
                 
                 # Log the process
                 logger.info(f"Processing long audio (duration: {duration}s) using chunking method")
