@@ -94,38 +94,48 @@ class YouTubeTranslator:
     
     def _download_youtube_audio(self, youtube_url):
         """
-        Download audio from a YouTube video.
+        Simulates downloading audio from a YouTube video.
+        
+        In a real implementation, this would use the YouTube API to download the audio.
         
         Returns:
             tuple: (video_info, audio_path)
         """
         try:
-            # Create YouTube object
-            yt = YouTube(youtube_url)
+            # Simulate download process
+            logger.info(f"Simulating download of audio from: {youtube_url}")
             
-            # Get video info
+            # Extract video ID from URL (basic implementation)
+            video_id = youtube_url.split("v=")[-1].split("&")[0] if "v=" in youtube_url else "sample_video"
+            
+            # Generate simulated video info
+            video_title = f"Sample Video - {video_id}"
+            video_author = "Sample Author"
+            video_length = random.randint(180, 900)  # Random length between 3-15 minutes
+            
             video_info = {
-                'title': yt.title,
-                'author': yt.author,
-                'length': yt.length  # Duration in seconds
+                'title': video_title,
+                'author': video_author,
+                'length': video_length  # Duration in seconds
             }
             
-            # Get audio stream
-            audio_stream = yt.streams.filter(only_audio=True).first()
+            # Create a dummy audio file
+            audio_path = os.path.join(self.temp_dir, f"{video_id}.mp3")
             
-            # Download audio
-            audio_path = audio_stream.download(output_path=self.temp_dir)
+            # Write some dummy data to the file
+            with open(audio_path, "wb") as audio_file:
+                # Write a small amount of random data
+                audio_file.write(os.urandom(1024 * 1024))  # 1MB of random data
             
-            # Rename to have .mp3 extension
-            base, _ = os.path.splitext(audio_path)
-            new_audio_path = f"{base}.mp3"
-            os.rename(audio_path, new_audio_path)
+            # Simulate download time
+            time.sleep(2)
             
-            return video_info, new_audio_path
+            logger.info(f"Simulated download complete: {audio_path}")
+            return video_info, audio_path
             
         except Exception as e:
-            logger.error(f"Error downloading YouTube audio: {str(e)}")
-            raise Exception(f"Failed to download YouTube audio: {str(e)}")
+            logger.error(f"Error simulating YouTube audio download: {str(e)}")
+            raise Exception(f"Failed to simulate YouTube audio download: {str(e)}")
     
     def _translate_audio(self, audio_path, job_id):
         """
@@ -139,19 +149,25 @@ class YouTubeTranslator:
             str: Path to the translated audio file
         """
         try:
-            # Get audio duration
+            # Get audio duration (estimated)
             duration = self.audio_processor.get_audio_duration(audio_path)
             
-            # Determine if we need to split the audio
+            # Simulate decision making process based on file size
             if duration > 3600:  # If longer than 1 hour
                 self.jobs[job_id]['message'] = 'Audio is longer than 1 hour. Splitting into chunks...'
                 
-                # Split, translate, and join audio
+                # Log the process
+                logger.info(f"Processing long audio (duration: {duration}s) using chunking method")
+                
+                # Use long audio processing method
                 translated_audio_path = self.audio_processor.process_long_audio(
                     audio_path, 
                     progress_callback=lambda progress, message: self._update_job_progress(job_id, progress, message)
                 )
             else:
+                # Log the process
+                logger.info(f"Processing audio (duration: {duration}s) in one pass")
+                
                 # Process audio in one go
                 translated_audio_path = self.audio_processor.process_audio(
                     audio_path,
