@@ -185,8 +185,8 @@ class YouTubeTranslator:
     
     def _update_job_progress(self, job_id, progress, message):
         """Update job progress."""
-        if job_id in self.jobs:
+        if job_id in YouTubeTranslator._jobs:
             # Scale progress from 20-90% (as 0-20% is download, 90-100% is finalization)
             scaled_progress = 20 + (progress * 0.7)
-            self.jobs[job_id]['progress'] = min(90, scaled_progress)
-            self.jobs[job_id]['message'] = message
+            YouTubeTranslator._jobs[job_id]['progress'] = min(90, scaled_progress)
+            YouTubeTranslator._jobs[job_id]['message'] = message
